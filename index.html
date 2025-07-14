@@ -185,22 +185,27 @@
           div.textContent = nombre;
           div.classList.add("ramo");
 
-          const completado = estado[nombre];
-          const puedeTomar = requisitos.length === 0 || requisitos.every(r => estado[r]);
+            div.textContent = nombre;
+      div.classList.add("ramo");
 
-          if (completado) {
-            div.classList.add("completado", "tachado");
-          } else if (puedeTomar) {
-            div.classList.add("activo");
-            div.onclick = () => toggleRamo(nombre);
-          }
+      const completado = estado[nombre];
+      const puedeTomar = requisitos.length === 0 || requisitos.every(r => estado[r]);
 
-          columna.appendChild(div);
-        });
-
-        contenedor.appendChild(columna);
+      if (puedeTomar) {
+        div.classList.add("activo");
+        div.onclick = () => toggleRamo(nombre);
       }
-    }
+
+      if (completado) {
+        div.classList.add("completado", "tachado");
+      }
+
+      columna.appendChild(div);
+    });
+
+    contenedor.appendChild(columna);
+  }
+}
 
     refrescar();
   </script>
