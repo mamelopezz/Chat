@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Curricular de Medicina Veterinaria</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 15px;
+    }
+    .semestre {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .semestre h2 {
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 5px;
+      border-radius: 5px;
+    }
+    .ramo {
+      background-color: #ccc;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 5px;
+      cursor: not-allowed;
+      position: relative;
+      transition: all 0.3s;
+    }
+    .ramo.activo {
+      background-color: #fff;
+      cursor: pointer;
+    }
+    .ramo.completado {
+      background-color: #999;
+    }
+    .ramo.tachado::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #000;
+      transform: rotate(-20deg);
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Curricular de Medicina Veterinaria</h1>
+  <div class="grid" id="malla"></div>
+
+  <script>
+    const ramos = {
+      1: [
+        "Introducción a las Ciencias Veterinarias",
+        "Fundamento de la Química",
+        "Biología celular y molecular",
+        "Matemáticas",
+        "Zoología",
+        "Fundamentos de la Física"
+      ],
+      2: [
+        {nombre: "Anatomía animal I", req: ["Zoología"]},
+        {nombre: "Praderas y Especies Forrajeras", req: ["Biología celular y molecular"]},
+        {nombre: "Fundamentos de Bioquimica", req: ["Fundamento de la Química"]},
+        {nombre: "Histoembriología Veterinaria", req: ["Biología celular y molecular"]},
+        {nombre: "Ecología", req: ["Matemáticas", "Zoología"]},
+        "Electivo I"
+      ],
+      3: [
+        {nombre: "Anatomía Animal II", req: ["Anatomía animal I"]},
+        {nombre: "Nutrición y Alimentación Animal", req: ["Praderas y Especies Forrajeras", "Fundamentos de Bioquimica"]},
+        {nombre: "Fisiología Veterinaria", req: ["Fundamentos de Bioquimica", "Histoembriología Veterinaria"]},
+        {nombre: "Práctica Inicial", req: ["Anatomía animal I", "Ecología"]},
+        {nombre: "Inmunología General", req: ["Biología celular y molecular", "Fundamentos de Bioquimica"]},
+        {nombre: "Bioestadística", req: ["Matemáticas"]},
+        "Electivo II"
+      ],
+      4: [
+        {nombre: "Etología y Bienestar Animal", req: ["Fisiología Veterinaria"]},
+        {nombre: "Histopatología", req: ["Fisiología Veterinaria"]},
+        {nombre: "Microbiología Veterinaria", req: ["Inmunología General"]},
+        {nombre: "Conservación de Fauna Silvestre", req: ["Ecología"]},
+        {nombre: "Métodos de Investigación en Salud", req: ["Bioestadística"]},
+        "Electivo III"
+      ],
+      5: [
+        {nombre: "Genética en Ciencias Veterinarias", req: ["Bioestadística"]},
+        {nombre: "Epidemiología Veterinaria", req: ["Métodos de Investigación en Salud"]},
+        {nombre: "Fisiopatología Veterinaria", req: ["Anatomía Animal II", "Histopatología"]},
+        {nombre: "Gestión Ambiental y Desarrollo Sustentable", req: ["Conservación de Fauna Silvestre"]},
+        {nombre: "Gestión Contable y Financiera", req: ["Bioestadística"]},
+        "Electivo IV"
+      ],
+      6: [
+        {nombre: "Semiología veterinaria", req: ["Etología y Bienestar Animal", "Fisiopatología Veterinaria"]},
+        {nombre: "Reproducción animal", req: ["Fisiopatología Veterinaria"]},
+        {nombre: "Anatomía Patológica", req: ["Fisiopatología Veterinaria"]},
+        {nombre: "Microbiología de los Alimentos", req: ["Microbiología Veterinaria", "Métodos de Investigación en Salud"]},
+        {nombre: "Práctica Intermedia", req: ["Práctica Inicial", "Etología y Bienestar Animal"]},
+        "Electivo V"
+      ],
+      7: [
+        {nombre: "Sistemas de Producción Animal", req: ["Nutrición y Alimentación Animal", "Genética en Ciencias Veterinarias"]},
+        {nombre: "Farmacología Veterinaria", req: ["Fisiopatología Veterinaria"]},
+        {nombre: "Enfermedades producidas por agentes biológicos I", req: ["Epidemiología Veterinaria", "Microbiología de los Alimentos"]},
+        {nombre: "Procedimientos clínicos", req: ["Semiología veterinaria"]},
+        {nombre: "Imagenología", req: ["Anatomía Patológica"]},
+        {nombre: "Inteligencia artifical aplicada a la salud", req: ["Bioestadística"]}
+      ],
+      8: [
+        {nombre: "Laboratorio clínico y biotecnología", req: ["Laboratorio clínico y biotecnología", "Enfermedades producidas por agentes biológicos I"]},
+        {nombre: "Investigación en Ciencias Veterinarias", req: ["Métodos de Investigación en Salud", "Farmacología Veterinaria"]},
+        {nombre: "Enfermedades producidas por agentes biológicos II", req: ["Enfermedades producidas por agentes biológicos I"]},
+        {nombre: "Principios de cirugía y anestesiología", req: ["Farmacología Veterinaria", "Procedimientos clínicos"]},
+        {nombre: "Medicina interna", req: ["Semiología veterinaria", "Imagenología"]},
+        "Bioética"
+      ],
+      9: [
+        {nombre: "Salud Pública Veterinaria", req: ["Enfermedades producidas por agentes biológicos II"]},
+        {nombre: "Unidad de Investigación I", req: ["Investigación en Ciencias Veterinarias", "Bioética"]},
+        {nombre: "Internado de Pequeños Animales I", req: ["Laboratorio clínico y biotecnología", "Principios de cirugía y anestesiología", "Medicina interna"]},
+        {nombre: "Internado de Animales Mayores I", req: ["Laboratorio clínico y biotecnología", "Principios de cirugía y anestesiología", "Medicina interna"]},
+        {nombre: "Formulación y Evaluación de Proyectos Veterinarios", req: ["Gestión Contable y Financiera", "Sistemas de Producción Animal"]},
+        {nombre: "Gestión Veterinaria", req: ["Gestión Contable y Financiera", "Sistemas de Producción Animal"]},
+        {nombre: "Práctica Profesional", req: ["Obtención de licenciatura"]}
+      ],
+      10: [
+        {nombre: "Una Salud", req: ["Salud Pública Veterinaria", "Formulación y Evaluación de Proyectos Veterinarios"]},
+        {nombre: "Unidad de Investigación II", req: ["Unidad de Investigación I"]},
+        "Internado Electivo: Pequeños Animales II",
+        "Internado Electivo: Animales Mayores II",
+        "Internado Electivo: Conservación, Biodiversidad y Medio Ambiente",
+        "Internado Electivo: Producción y Sistemas de Aseguramiento de la Calidad",
+        {nombre: "Orientación Laboral y Responsabilidad Ética en Medicina Veterinaria", req: ["Práctica Intermedia"]}
+      ]
+    };
+
+    const estado = JSON.parse(localStorage.getItem("estadoRamos") || "{}");
+
+    function guardarEstado() {
+      localStorage.setItem("estadoRamos", JSON.stringify(estado));
+    }
+
+    function toggleRamo(nombre) {
+      estado[nombre] = !estado[nombre];
+      guardarEstado();
+      refrescar();
+    }
+
+    function refrescar() {
+      const contenedor = document.getElementById("malla");
+      contenedor.innerHTML = "";
+      for (let i = 1; i <= 10; i++) {
+        const columna = document.createElement("div");
+        columna.classList.add("semestre");
+        const titulo = document.createElement("h2");
+        titulo.textContent = `Semestre ${i}`;
+        columna.appendChild(titulo);
+
+        const lista = ramos[i];
+        if (!lista) continue;
+
+        lista.forEach(ramo => {
+          const div = document.createElement("div");
+          const nombre = typeof ramo === 'string' ? ramo : ramo.nombre;
+          const requisitos = typeof ramo === 'string' ? [] : ramo.req;
+
+          div.textContent = nombre;
+          div.classList.add("ramo");
+
+          const completado = estado[nombre];
+          const puedeTomar = requisitos.every(r => estado[r]);
+
+          if (completado) {
+            div.classList.add("completado", "tachado");
+          } else if (requisitos.length === 0 || puedeTomar) {
+            div.classList.add("activo");
+            div.onclick = () => toggleRamo(nombre);
+          }
+
+          columna.appendChild(div);
+        });
+
+        contenedor.appendChild(columna);
+      }
+    }
+
+    refrescar();
+  </script>
+</body>
+</html>
